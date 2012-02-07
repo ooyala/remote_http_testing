@@ -58,3 +58,5 @@ When working on this gem, after you've made changes, you can include your modifi
     gem "remote_http_testing", :path => "~/path/to/remote_http_testing_repo"
 
 Then run `bundle install` from within your app. The installed gem is now symlinked to your local working copy of the gem.
+
+To publish a new version of this gem, increment the version number in `version.rb`, and run `rake release`.
