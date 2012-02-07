@@ -28,25 +28,6 @@ module RemoteHttpTesting
     @json_response ||= JSON.parse(last_response.body)
   end
 
-  def assert_status(status_code, helpful_message = last_response.body)
-    assert_equal(status_code.to_i, last_response.code.to_i, helpful_message)
-  end
-
-  def assert_content_include?(string)
-    assert_block("Failed: content did not include the string: #{string}") { content_include?(string) }
-  end
-
-  def assert_content_not_include?(string)
-    assert_block("Failed: content should not have included this string but it did: #{string}") do
-      !content_include?(string)
-    end
-  end
-
-  def content_include?(string)
-    raise "No request was made yet, or no response was returned" unless last_response
-    last_response.body.include?(string)
-  end
-
   # Prints out an error message and exits the program (to avoid running subsequent tests which are just
   # going to fail) if the server is not reachable.
   def ensure_reachable!(server_url, server_display_name = nil)
@@ -108,6 +89,25 @@ module RemoteHttpTesting
     return if query_string_hash.nil? || query_string_hash == ""
     key_values = query_string_hash.map { |key, value| "#{key}=#{CGI.escape(value.to_s)}" }.join("&")
     uri.query = uri.query.to_s.empty? ? key_values : "&" + key_values # uri.query can be nil
+  end
+
+  def assert_status(status_code, helpful_message = last_response.body)
+    assert_equal(status_code.to_i, last_response.code.to_i, helpful_message)
+  end
+
+  def assert_content_include?(string)
+    assert_block("Failed: content did not include the string: #{string}") { content_include?(string) }
+  end
+
+  def assert_content_not_include?(string)
+    assert_block("Failed: content should not have included this string but it did: #{string}") do
+      !content_include?(string)
+    end
+  end
+
+  def content_include?(string)
+    raise "No request was made yet, or no response was returned" unless last_response
+    last_response.body.include?(string)
   end
 
   # This is intended to provide similar functionality to the Rails assert_select helper.
