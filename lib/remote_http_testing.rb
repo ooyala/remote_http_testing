@@ -45,9 +45,10 @@ module RemoteHttpTesting
 
   # Prints out an error message and exits the program (to avoid running subsequent tests which are just
   # going to fail) if the server is not reachable.
-  def ensure_reachable!(server_url, server_display_name)
+  def ensure_reachable!(server_url, server_display_name = nil)
     unless server_reachable?(server_url)
-      puts "FAIL: Unable to connect to #{server_display_name} at #{server_url} "
+      failure_message = server_display_name ? "#{server_display_name} at #{server_url}" : server_url
+      puts "FAIL: Unable to connect to #{failure_message}"
       exit 1
     end
   end
