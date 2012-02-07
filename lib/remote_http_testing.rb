@@ -4,8 +4,12 @@ require "nokogiri"
 require "json"
 
 #
-# Helpers for writing integration tests which make HTTP requests to the servers being tested.
-# Include this module into your test case class.
+# This module helps write integration tests which make HTTP requests to remote servers. Unlike Rack::Test,
+# it doesn't make requests to an in-process Rack server. Include it into your test case class.
+#
+# This module's API should match the API of Rack::Test. In the future, we should consider whether it's just as
+# easy to amend Rack::Test so that it can make requests to remote servers, since Rack::Test has supoprt for
+# other desirable features.
 #
 module RemoteHttpTesting
   attr_accessor :last_response
@@ -33,7 +37,7 @@ module RemoteHttpTesting
   end
 
   def assert_content_not_include?(string)
-    assert_block("Failed: should not have included this string but it did: #{string}") do
+    assert_block("Failed: content should not have included this string but it did: #{string}") do
       !content_include?(string)
     end
   end
