@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Phil Crosby"]
   s.email       = ["phil.crosby@gmail.com"]
   s.homepage    = "http://github.com/ooyala"
-  s.summary     = %q{A small test helper for making remote HTTP requests and response assertions.}
+  s.summary     = %q{A small library for making remote HTTP requests and response assertions in tests.}
 
   s.rubyforge_project = "remote_http_testing"
 
