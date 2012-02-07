@@ -76,14 +76,15 @@ module RemoteHttpTesting
   # like adding a login cookie.
   def create_request(url, http_method, params = {}, request_body = nil)
     uri = URI.parse(url)
-    HttpTestingHelper::populate_uri_with_querystring(uri, params)
-    request = case http_method
-    when :delete: Net::HTTP::Delete.new(uri.request_uri)
-    when :get: Net::HTTP::Get.new(uri.request_uri)
-    when :post: Net::HTTP::Post.new(uri.request_uri)
-    when :put: Net::HTTP::Put.new(uri.request_uri)
-    when :patch: Net::HTTP::Patch.new(uri.request_uri)
+    RemoteHttpTesting::populate_uri_with_querystring(uri, params)
+    request_class = case http_method
+      when :delete then Net::HTTP::Delete
+      when :get then Net::HTTP::Get
+      when :post then Net::HTTP::Post
+      when :put then Net::HTTP::Put
+      when :patch then Net::HTTP::Patch
     end
+    request = request_class.new(uri.request_uri)
     request.body = request_body if request_body
     headers_for_request.each { |key, value| request.add_field(key, value) } if headers_for_request
     request
