@@ -80,8 +80,11 @@ module RemoteHttpTesting
     url = self.server + url
     uri = URI.parse(url)
     self.last_request = create_request(url, http_method, params, request_body)
-    response = Net::HTTP.new(uri.host, uri.port).request(self.last_request) rescue nil
-    raise "Unable to connect to #{self.server}" if response.nil?
+    begin
+      response = Net::HTTP.new(uri.host, uri.port).request(self.last_request)
+    rescue Errno::ECONNREFUSED => error
+      raise "Unable to connect to #{self.server}"
+    end
     self.last_response = response
   end
 
