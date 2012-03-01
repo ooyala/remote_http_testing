@@ -28,6 +28,18 @@ module RemoteHttpTesting
     @json_response ||= JSON.parse(last_response.body)
   end
 
+  # Temporarily make requests to a different server than the one specified by your server() method.
+  def use_server(server, &block)
+    @temporary_server = server
+    begin
+      yield
+    ensure
+      @temporary_server = nil
+    end
+  end
+
+  def current_server() (@temporary_server || self.server) end
+
   # Prints out an error message and exits the program (to avoid running subsequent tests which are just
   # going to fail) if the server is not reachable.
   def ensure_reachable!(server_url, server_display_name = nil)
@@ -77,13 +89,13 @@ module RemoteHttpTesting
 
   def perform_request(url, http_method, params = {}, request_body = nil)
     self.last_response = @dom_response = @json_response = nil
-    url = self.server + url
+    url = current_server + url
     uri = URI.parse(url)
     self.last_request = create_request(url, http_method, params, request_body)
     begin
       response = Net::HTTP.new(uri.host, uri.port).request(self.last_request)
     rescue Errno::ECONNREFUSED => error
-      raise "Unable to connect to #{self.server}"
+      raise "Unable to connect to #{self.current_server}"
     end
     self.last_response = response
   end
