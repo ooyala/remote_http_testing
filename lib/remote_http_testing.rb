@@ -2,6 +2,7 @@ require "remote_http_testing/version"
 require "cgi"
 require "nokogiri"
 require "json"
+require "net/http"
 
 #
 # This module helps write integration tests which make HTTP requests to remote servers. Unlike Rack::Test,
