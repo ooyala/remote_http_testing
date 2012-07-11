@@ -41,7 +41,7 @@ These methods are available to your test.
 
     put(url, params)
 
-    last_response() - a Net::HTTPResponse object. Use last_response.body to get the response body.
+    last_response() - a Rack::MockResponse object. Use last_response.body to get the response body.
 
     dom_response() - The response body parsed using Nokogiri::HTML().
 
