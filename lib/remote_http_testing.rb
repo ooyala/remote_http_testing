@@ -67,9 +67,13 @@ module RemoteHttpTesting
 
   def delete(url, params = {}, request_body = nil) perform_request(url, :delete, params, request_body) end
   def get(url, params = {}, request_body = nil) perform_request(url, :get, params, request_body) end
-  def post(url, params = {}, request_body = nil) perform_request(url, :post, params, request_body) end
-  def put(url, params = {}, request_body = nil) perform_request(url, :put, params, request_body) end
-  def patch(url, params = {}, request_body = nil) perform_request(url, :patch, params, request_body) end
+
+  # POST/PUT/PATCH should params should typically be form encoded and present
+  # in the request body. This ensures the format remains consistent with
+  # Rack Test (ie - get {params}, {session info})
+  def post( url, form_params = {}, params = {}) perform_request(url, :post,  params, URI.encode_www_form(form_params)) end
+  def put(  url, form_params = {}, params = {}) perform_request(url, :put,   params, URI.encode_www_form(form_params)) end
+  def patch(url, form_params = {}, params = {}) perform_request(url, :patch, params, URI.encode_www_form(form_params)) end
 
   # Used by perform_request. This can be overridden by integration tests to append things to the request,
   # like adding a login cookie.
