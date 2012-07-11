@@ -3,6 +3,7 @@ require "cgi"
 require "nokogiri"
 require "json"
 require "net/http"
+require "rack/mock"
 
 #
 # This module helps write integration tests which make HTTP requests to remote servers. Unlike Rack::Test,
@@ -98,7 +99,7 @@ module RemoteHttpTesting
     rescue Errno::ECONNREFUSED => error
       raise "Unable to connect to #{self.current_server}"
     end
-    self.last_response = response
+    self.last_response = wrap_with_mock(response)
   end
 
   def self.populate_uri_with_querystring(uri, query_string_hash)
@@ -134,5 +135,9 @@ module RemoteHttpTesting
     assert_block("There were no elements matching #{css_selector}") do
       !dom_response.css(css_selector).empty?
     end
+  end
+
+  def wrap_with_mock(response)
+    Rack::MockResponse.new(response.code, response.header.to_hash, response.body)
   end
 end
