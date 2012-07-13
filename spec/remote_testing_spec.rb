@@ -71,4 +71,11 @@ describe RemoteHttpTesting do
       json_response[0]["id"].should == 222932599931285505
     end
   end
+
+  describe '#response' do
+    before { get '/index.html' }
+    it "is the last HTTP response" do
+      response.should be_a(Net::HTTPOK)
+    end
+  end
 end
