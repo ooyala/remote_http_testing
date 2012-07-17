@@ -71,9 +71,9 @@ module RemoteHttpTesting
   # POST/PUT/PATCH should params should typically be form encoded and present
   # in the request body. This ensures the format remains consistent with
   # Rack Test (ie - get {params}, {session info})
-  def post( url, form_params = {}, params = {}) perform_request(url, :post,  params, URI.encode_www_form(form_params)) end
-  def put(  url, form_params = {}, params = {}) perform_request(url, :put,   params, URI.encode_www_form(form_params)) end
-  def patch(url, form_params = {}, params = {}) perform_request(url, :patch, params, URI.encode_www_form(form_params)) end
+  def post( url, form_params = {}, params = {}) perform_request(url, :post,  params, CGI.unescape(form_params.to_query)) end
+  def put(  url, form_params = {}, params = {}) perform_request(url, :put,   params, CGI.unescape(form_params.to_query)) end
+  def patch(url, form_params = {}, params = {}) perform_request(url, :patch, params, CGI.unescape(form_params.to_query)) end
 
   # Used by perform_request. This can be overridden by integration tests to append things to the request,
   # like adding a login cookie.
