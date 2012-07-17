@@ -3,6 +3,7 @@ require "cgi"
 require "nokogiri"
 require "json"
 require "net/http"
+require "rack/mock"
 
 #
 # This module helps write integration tests which make HTTP requests to remote servers. Unlike Rack::Test,
@@ -66,9 +67,13 @@ module RemoteHttpTesting
 
   def delete(url, params = {}, request_body = nil) perform_request(url, :delete, params, request_body) end
   def get(url, params = {}, request_body = nil) perform_request(url, :get, params, request_body) end
-  def post(url, params = {}, request_body = nil) perform_request(url, :post, params, request_body) end
-  def put(url, params = {}, request_body = nil) perform_request(url, :put, params, request_body) end
-  def patch(url, params = {}, request_body = nil) perform_request(url, :patch, params, request_body) end
+
+  # POST/PUT/PATCH should params should typically be form encoded and present
+  # in the request body. This ensures the format remains consistent with
+  # Rack Test (ie - get {params}, {session info})
+  def post( url, form_params = {}, params = {}) perform_request(url, :post,  params, CGI.unescape(form_params.to_query)) end
+  def put(  url, form_params = {}, params = {}) perform_request(url, :put,   params, CGI.unescape(form_params.to_query)) end
+  def patch(url, form_params = {}, params = {}) perform_request(url, :patch, params, CGI.unescape(form_params.to_query)) end
 
   # Used by perform_request. This can be overridden by integration tests to append things to the request,
   # like adding a login cookie.
@@ -89,16 +94,34 @@ module RemoteHttpTesting
   end
 
   def perform_request(url, http_method, params = {}, request_body = nil)
+    # Reset last request
     self.last_response = @dom_response = @json_response = nil
+
     url = current_server + url
-    uri = URI.parse(url)
     self.last_request = create_request(url, http_method, params, request_body)
+
+    response = fetch(url, self.last_request)
+
+    self.last_response = wrap_with_mock(response)
+  end
+
+  def fetch(url, request)
+    uri = URI.parse(url)
     begin
-      response = Net::HTTP.new(uri.host, uri.port).request(self.last_request)
+      response = Net::HTTP.new(uri.host, uri.port).request(request)
+
+      # Follow redirects
+      redirect_limit = 10
+      while response.header['location']
+        raise "Recursive redirect: #{response.header['location']}" if redirect_limit <= 0
+        prev_redirect = response.header['location']
+        response = Net::HTTP.get_response(URI.parse(response.header['location']))
+        redirect_limit -= 1
+      end
     rescue Errno::ECONNREFUSED => error
       raise "Unable to connect to #{self.current_server}"
     end
-    self.last_response = response
+    response
   end
 
   def self.populate_uri_with_querystring(uri, query_string_hash)
@@ -134,5 +157,9 @@ module RemoteHttpTesting
     assert_block("There were no elements matching #{css_selector}") do
       !dom_response.css(css_selector).empty?
     end
+  end
+
+  def wrap_with_mock(response)
+    Rack::MockResponse.new(response.code, response.header.to_hash, response.body)
   end
 end
