@@ -94,16 +94,34 @@ module RemoteHttpTesting
   end
 
   def perform_request(url, http_method, params = {}, request_body = nil)
+    # Reset last request
     self.last_response = @dom_response = @json_response = nil
+
     url = current_server + url
-    uri = URI.parse(url)
     self.last_request = create_request(url, http_method, params, request_body)
+
+    response = fetch(url, self.last_request)
+
+    self.last_response = wrap_with_mock(response)
+  end
+
+  def fetch(url, request)
+    uri = URI.parse(url)
     begin
-      response = Net::HTTP.new(uri.host, uri.port).request(self.last_request)
+      response = Net::HTTP.new(uri.host, uri.port).request(request)
+
+      # Follow redirects
+      redirect_limit = 10
+      while response.header['location']
+        raise "Recursive redirect: #{response.header['location']}" if redirect_limit <= 0
+        prev_redirect = response.header['location']
+        response = Net::HTTP.get_response(URI.parse(response.header['location']))
+        redirect_limit -= 1
+      end
     rescue Errno::ECONNREFUSED => error
       raise "Unable to connect to #{self.current_server}"
     end
-    self.last_response = wrap_with_mock(response)
+    response
   end
 
   def self.populate_uri_with_querystring(uri, query_string_hash)
