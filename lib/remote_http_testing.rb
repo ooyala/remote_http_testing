@@ -99,6 +99,7 @@ module RemoteHttpTesting
       raise "Unable to connect to #{self.current_server}"
     end
     self.last_response = response
+    adjust_response_encoding()
   end
 
   def self.populate_uri_with_querystring(uri, query_string_hash)
@@ -133,6 +134,13 @@ module RemoteHttpTesting
     raise "You're trying to assert_select when there hasn't been a response yet." unless dom_response
     assert_block("There were no elements matching #{css_selector}") do
       !dom_response.css(css_selector).empty?
+    end
+  end
+
+  def adjust_response_encoding
+    unless self.last_response["content-type"].nil? or self.last_response["content-type"].empty?
+      splited_response = self.last_response["content-type"].split("charset=")
+      self.last_response.body = self.last_response.body.force_encoding(splited_response[1]) unless splited_response[1].nil?
     end
   end
 end
