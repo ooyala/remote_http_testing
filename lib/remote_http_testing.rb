@@ -98,8 +98,7 @@ module RemoteHttpTesting
     rescue Errno::ECONNREFUSED => error
       raise "Unable to connect to #{self.current_server}"
     end
-    self.last_response = response
-    adjust_response_encoding()
+    self.last_response = adjust_response_encoding(response)
   end
 
   def self.populate_uri_with_querystring(uri, query_string_hash)
@@ -137,10 +136,11 @@ module RemoteHttpTesting
     end
   end
 
-  def adjust_response_encoding
-    unless self.last_response["content-type"].nil? or self.last_response["content-type"].empty?
-      splited_response = self.last_response["content-type"].split("charset=")
-      self.last_response.body = self.last_response.body.force_encoding(splited_response[1]) unless splited_response[1].nil?
+  def adjust_response_encoding(response)
+    unless response["content-type"].nil?
+      split_response = response["content-type"].split("charset=")
+      response.body = response.body.force_encoding(split_response[1]) unless split_response[1].nil?
     end
+    response
   end
 end
