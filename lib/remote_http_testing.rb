@@ -98,7 +98,7 @@ module RemoteHttpTesting
     rescue Errno::ECONNREFUSED => error
       raise "Unable to connect to #{self.current_server}"
     end
-    self.last_response = response
+    self.last_response = adjust_response_encoding(response)
   end
 
   def self.populate_uri_with_querystring(uri, query_string_hash)
@@ -134,5 +134,13 @@ module RemoteHttpTesting
     assert_block("There were no elements matching #{css_selector}") do
       !dom_response.css(css_selector).empty?
     end
+  end
+
+  def adjust_response_encoding(response)
+    unless response["content-type"].nil?
+      split_response = response["content-type"].split("charset=")
+      response.body = response.body.force_encoding(split_response[1]) unless split_response[1].nil?
+    end
+    response
   end
 end
