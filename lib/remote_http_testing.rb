@@ -64,15 +64,15 @@ module RemoteHttpTesting
     !response.nil? && response.code.to_i == 200
   end
 
-  def delete(url, params = {}, request_body = nil) perform_request(url, :delete, params, request_body) end
-  def get(url, params = {}, request_body = nil) perform_request(url, :get, params, request_body) end
-  def post(url, params = {}, request_body = nil) perform_request(url, :post, params, request_body) end
-  def put(url, params = {}, request_body = nil) perform_request(url, :put, params, request_body) end
-  def patch(url, params = {}, request_body = nil) perform_request(url, :patch, params, request_body) end
+  def delete(url, params = {}, request_body = nil, initheader = nil) perform_request(url, :delete, params, request_body, initheader) end
+  def get(url, params = {}, request_body = nil, initheader = nil) perform_request(url, :get, params, request_body, initheader) end
+  def post(url, params = {}, request_body = nil, initheader = nil) perform_request(url, :post, params, request_body, initheader) end
+  def put(url, params = {}, request_body = nil, initheader = nil) perform_request(url, :put, params, request_body, initheader) end
+  def patch(url, params = {}, request_body = nil, initheader = nil) perform_request(url, :patch, params, request_body, initheader) end
 
   # Used by perform_request. This can be overridden by integration tests to append things to the request,
   # like adding a login cookie.
-  def create_request(url, http_method, params = {}, request_body = nil)
+  def create_request(url, http_method, params = {}, request_body = nil, initheader = nil)
     uri = URI.parse(url)
     RemoteHttpTesting::populate_uri_with_querystring(uri, params)
     request_class = case http_method
@@ -82,17 +82,17 @@ module RemoteHttpTesting
       when :put then Net::HTTP::Put
       when :patch then Net::HTTP::Patch
     end
-    request = request_class.new(uri.request_uri)
+    request = request_class.new(uri.request_uri, initheader = initheader)
     request.body = request_body if request_body
     headers_for_request.each { |key, value| request.add_field(key, value) } if headers_for_request
     request
   end
 
-  def perform_request(url, http_method, params = {}, request_body = nil)
+  def perform_request(url, http_method, params = {}, request_body = nil, initheader = nil)
     self.last_response = @dom_response = @json_response = nil
     url = current_server + url
     uri = URI.parse(url)
-    self.last_request = create_request(url, http_method, params, request_body)
+    self.last_request = create_request(url, http_method, params, request_body, initheader)
     begin
       response = Net::HTTP.new(uri.host, uri.port).request(self.last_request)
     rescue Errno::ECONNREFUSED => error
