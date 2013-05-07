@@ -1,0 +1,80 @@
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 150
+X-RateLimit-Remaining: 139
+X-RateLimit-Reset: 1342150505
+X-RateLimit-Class: api
+Content-Type: application/json;charset=utf-8
+Last-Modified: Fri, 13 Jul 2012 03:11:55 GMT
+Expires: Tue, 31 Mar 1981 05:00:00 GMT
+Pragma: no-cache
+Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0
+Set-Cookie: guest_id="v1:134214911540811807";Expires=Sun, 13-Jul-14 03:11:55 GMT;Path=/;Domain=.twitter.com
+Status: 200 OK
+X-Transaction: 8b09775fa3650061
+X-Frame-Options: SAMEORIGIN
+Date: Fri, 13 Jul 2012 03:11:55 GMT
+Server: tfe
+Content-Length: 29427
+
+[
+  {
+    "created_at": "Wed Jul 11 05:57:28 +0000 2012",
+    "id": 222932599931285505,
+    "id_str": "222932599931285505",
+    "text": "@mrcs excellent work",
+    "source": "<a href=\"http://twitter.com/#!/download/ipad\" rel=\"nofollow\">Twitter for iPad</a>",
+    "truncated": false,
+    "in_reply_to_status_id": 222865614677622787,
+    "in_reply_to_status_id_str": "222865614677622787",
+    "in_reply_to_user_id": 101935227,
+    "in_reply_to_user_id_str": "101935227",
+    "in_reply_to_screen_name": "mrcs",
+    "user": {
+      "id": 12,
+      "id_str": "12",
+      "name": "Jack Dorsey",
+      "screen_name": "jack",
+      "location": "San Francisco",
+      "description": "Executive Chairman of Twitter, CEO of Square, a founder of both.",
+      "url": null,
+      "protected": false,
+      "followers_count": 2048806,
+      "friends_count": 1197,
+      "listed_count": 18245,
+      "created_at": "Tue Mar 21 20:50:14 +0000 2006",
+      "favourites_count": 1041,
+      "utc_offset": -28800,
+      "time_zone": "Pacific Time (US & Canada)",
+      "geo_enabled": true,
+      "verified": true,
+      "statuses_count": 11327,
+      "lang": "en",
+      "contributors_enabled": true,
+      "is_translator": false,
+      "profile_background_color": "EBEBEB",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme7/bg.gif",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme7/bg.gif",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1563216547/image_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1563216547/image_normal.jpg",
+      "profile_link_color": "990000",
+      "profile_sidebar_border_color": "DFDFDF",
+      "profile_sidebar_fill_color": "F3F3F3",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "show_all_inline_media": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": null,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 2,
+    "favorited": false,
+    "retweeted": false
+  }
+]

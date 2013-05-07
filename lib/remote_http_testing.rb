@@ -29,6 +29,8 @@ module RemoteHttpTesting
     @json_response ||= JSON.parse(last_response.body)
   end
 
+  def response; last_response; end
+
   # Temporarily make requests to a different server than the one specified by your server() method.
   def use_server(server, &block)
     @temporary_server = server
