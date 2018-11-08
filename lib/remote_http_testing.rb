@@ -143,4 +143,8 @@ module RemoteHttpTesting
     end
     response
   end
+
+  def assert_block(msg = nil)
+    assert yield, msg
+  end
 end
